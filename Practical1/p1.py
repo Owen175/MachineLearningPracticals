@@ -21,7 +21,7 @@ def makeBarChart():
 class MostTrivialPredictor:
     def __init__(self):
         unique, counts = np.unique(y_train, return_counts=True)
-        self.avg_y = np.dot(unique, counts)/N
+        self.avg_y = np.dot(unique, counts)/N_train
 
     def predict(self, _):
         return self.avg_y
@@ -82,10 +82,10 @@ def makeComparisonChart():
 
 # makeBarChart()
 
-print("MSE for simplest predictor: ", MostTrivialPredictor().getTestMSE())
+# print("MSE for simplest predictor: ", MostTrivialPredictor().getTestMSE())
 
-lp = LinearPredictor()
-print("Training MSE for linear regression on full test set: ", lp.getTestMSE())
-print("Training MSE for linear regression on full training set: ", lp.getTrainingMSE())
+# lp = LinearPredictor()
+# print("Training MSE for linear regression on full test set: ", lp.getTestMSE())
+# print("Training MSE for linear regression on full training set: ", lp.getTrainingMSE())
 
-makeComparisonChart()
+# makeComparisonChart()
