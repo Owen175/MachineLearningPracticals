@@ -1,0 +1,89 @@
+On Discriminative vs. Generative classifiers: A comparison of logistic regression
+and naive Bayes:
+The paper claims that whilst discriminative learning has a lower asymptotic
+error, a generative classifier will approach its asymptotic error faster, so 
+both approaches have use cases, as opposed to previous views that discriminative 
+is the only reasonable approach. 
+
+Generative:
+Learns p(x,y), uses Bayes' theorem to calculate p(y|x) and maximises this. 
+Discriminative:
+Learns p(y|x) directly or learns a map from x to the class labels. 
+
+Paper looks at these two claims:
+Discriminative has been generally preferred, since it avoids solving a more general problem
+whilst attempting to solve the original one.  
+No. of examples needed to fit a model is roughly linear in the number of free parameters in the model
+
+A probabilistic model p(x,y) can be fit either to optimise the joint probability of x and y
+or the conditional likelihood of p(y|x). The former is generative and latter is discriminative. 
+When considered together, they form a Generative-Discriminative pair.
+If p(x|y) is gaussian and p(y) is multinomial, the G-D pair is Normal Discriminant Analysis and Linear Regression. 
+For discrete inputs, the Naive Bayes Classifier and logistic regression form a G-D pair. 
+Therefore, it makes sense to compare within those pairs.
+
+Results:
+Generative model has higher asymptotic error
+Generative model approaches the asymptotic error with a possibly logarithmic number of examples.
+Therefore, for cases with fewer examples, there is a region in which generative models will perform better,
+since they approach the asymptotic error faster, whilst the discriminative model has to catch up. 
+
+
+Lecture 10 Notes:
+θ are the parameters. 
+
+p(y=c|xnew,θ) = p(y=c|θ)*p(xnew|y=c,θ)/sum over classes c'(p(y=c|θ)*p(xnew|y=c,θ))
+
+Top of the fraction:
+p(xnew,c|θ)
+
+Bottom of the fraction:
+Marginal distribution of p(xnew|θ)
+
+Bottom is constant. Therefore, argmaxc(p(y=c|xnew,θ)) = argmaxc(p(y=c|θ)*p(xnew|y=c,θ))
+p(y=c|xnew, θ) = p(y=c|θ)*p(xnew|y=c,θ)/p(xnew|θ) according to Bayes' theorem. 
+Again, the bottom is constant for a given xnew, so the problem is equivalent to:
+argmaxc(p(y=c|xnew, θ))
+
+We want to model 
+p(x|y=c,θ) for each c. 
+
+p(x,y|θ,π) = p(y|π)*p(x|y,θ)
+
+We introduce another set of parameters: π. πc represents the probability that y=c
+p(y=c|π) = πc
+
+Through some maths you get πc = Nc/N where Nc is the number of ys in class c and N is the number of ys. 
+Now we need to find p(x|y,θ)
+We will use θc to represent the parameters when y=c. 
+
+The NBC assumes independence of features to avoid exponential blowup of probabilities needed. 
+Therefore, according to NBC:
+p(x|y=c,θc) = product over all x(p(xj|y=c,θjc))
+
+We have 
+log p(D|θ,π) = sum over c(Nc log πc) + sum over i=1 to N(log p(xi | yi, θ))
+To fit the parameters θjc, you only need to use the jth feature of the datapoints and those datapoints 
+with y = c.
+If xj is real, you can model with a gaussian. Then, the parameters are θjc = (µjc, σ^2jc)
+If xj is categorical, you can model with multinoulli. p(xj=l|y=c,µjc) = µjc,l.
+Similarly to the πcs, µjc,l = number of datapoints with yi=c and xij=l / number with yi=c. 
+In the binary case, this is just the bernoulli distribution. 
+
+
+Notes on logistic regression implementation in scikit
+C=5:
+l1ratio=0
+
+Binary case: yi is 0 or 1. 
+P(yi=1|xi) is modelled as p(xi) = sigmoid(xiTw + w0)
+Taking the NLL and dividing by S=sum of class weight i*sample weight i for simplicity, you get:
+min_w (1/S) * sum_{i=1}^{n} s_i * (-y_i * log(p_hat(X_i)) - (1-y_i) * log(1-p_hat(X_i))) + r(w)/(S*C)
+where r(w) is the regulation term mentioned above. S can be ignored since it is a common denominator when thinking about C values. 
+
+Multinomial case: extension of binary. 
+Pr(Y_i = k) = e^(β_k · X_i) / Σ_(j=1)^K e^(β_j · X_i),  1 ≤ k ≤ K.
+softmax(k, s_1, ..., s_K) = e^(s_k) / Σ_(j=1)^K e^(s_j)
+Pr(Y_i = k) = softmax(k, β_1 · X_i, ..., β_k · X_i)
+
+Again, you take the NLL and minimise. 
