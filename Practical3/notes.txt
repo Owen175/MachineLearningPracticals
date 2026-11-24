@@ -1,0 +1,21 @@
+Structure suggested:
+Input is Bx1x28x28 - B minibatch size and 1x28x28 is the image in grayscale. 
+Initialise weights as gaussian r.v.s with mean 0 and variance 0.0025. Biases as 0.1 (supports ReLU)
+Convolutional layer: 25 filters with size 12x12x1 with stride of 2 in both dimensions, no padding. Follow with ReLU
+Add another convolutional layer: 64 filters with size 5x5x25 maintaining height and width. Stride 1 and pad when necessary + ReLU
+Max pooling with pool size 2x2
+flattening operation to transform 2d image into a 1d vector - pytorch flatten
+Add fully connected layer with 1024 inputs. ReLU activation
+Add dropout layer to avoid overfitting. 
+Add another fully connected layer to get 10 output units to softmax for each number. If using cross entropy, softmax not needed in torch
+Using cross entropy
+Accuracy fraction of data correctly classified. 
+Adam optimizer for training - look at docs
+Train on minibatches of size 64. 
+1000-5000 iterations - start low to see progress
+
+
+https://docs.pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+Looking at the struture here.
+https://docs.pytorch.org/docs/2.15/generated/torch.nn.Module.html#torch.nn.Module
+Here for NN
